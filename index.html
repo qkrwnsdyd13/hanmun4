@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>한문</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="name">
+        <h1>한문 조 점수 계산기</h1>
+    </div>
+    <div class="container">
+        <!-- 전환 링크 -->
+
+        <!-- 위쪽 3모둠 -->
+        <div id="top-groups" class="groups-section">
+            <div class="groups-container"></div>
+        </div>
+
+        <!-- 아래쪽 2모둠 -->
+        <div id="bottom-groups" class="groups-section">
+            <div class="groups-container"></div>
+        </div>
+    </div>
+    <div id="toggle-container">
+            <a href="#" id="toggle-link">감소로 바꾸기</a>
+            <p id="current-mode">현재 : 증가</p>
+        </div>
+    <script>
+        let isIncreaseMode = true; // 현재 모드: true = 증가, false = 감소
+
+        const toggleLink = document.getElementById('toggle-link');
+        const currentModeText = document.getElementById('current-mode');
+
+        // 모드 전환 링크
+        toggleLink.addEventListener('click', (e) => {
+            e.preventDefault(); // 기본 링크 동작 방지
+            isIncreaseMode = !isIncreaseMode; // 모드 변경
+            updateToggleText(); // 텍스트 업데이트
+        });
+
+        function updateToggleText() {
+            if (isIncreaseMode) {
+                toggleLink.textContent = '감소로 바꾸기';
+                currentModeText.textContent = '현재 : 증가';
+            } else {
+                toggleLink.textContent = '증가로 바꾸기';
+                currentModeText.textContent = '현재 : 감소';
+            }
+        }
+
+        const topGroupCount = 3; // 위쪽 모둠 수
+        const bottomGroupCount = 2; // 아래쪽 모둠 수
+
+        const topGroupsContainer = document.querySelector("#top-groups .groups-container");
+        const bottomGroupsContainer = document.querySelector("#bottom-groups .groups-container");
+
+        const groups = [];
+
+        // 모둠 초기화 함수
+        function initGroups(groupCount, container) {
+            for (let i = 1; i <= groupCount; i++) {
+                const groupId = groups.length + 1;
+                const group = {
+                    id: groupId,
+                    score: 0,
+                    element: createGroupElement(groupId, container)
+                };
+                groups.push(group);
+            }
+        }
+
+        // 개별 모둠 UI 생성
+        function createGroupElement(groupId, container) {
+            const groupDiv = document.createElement('div');
+            groupDiv.classList.add('group');
+
+            const title = document.createElement('h3');
+            title.textContent = `${groupId}조`;
+            groupDiv.appendChild(title);
+
+            const scoreDisplay = document.createElement('div');
+            scoreDisplay.classList.add('score-display');
+            scoreDisplay.textContent = '0';
+            groupDiv.appendChild(scoreDisplay);
+
+            const linkContainer = document.createElement('div');
+            linkContainer.classList.add('links');
+
+            // 100점 링크
+            const toggle100Link = document.createElement('a');
+            toggle100Link.href = '#';
+            toggle100Link.textContent = '100';
+            toggle100Link.classList.add('toggle-link');
+            toggle100Link.addEventListener('click', (e) => {
+                e.preventDefault(); // 기본 링크 동작 방지
+                updateScore(groupId, 100);
+            });
+            linkContainer.appendChild(toggle100Link);
+
+            // 500점 링크
+            const toggle500Link = document.createElement('a');
+            toggle500Link.href = '#';
+            toggle500Link.textContent = '500';
+            toggle500Link.classList.add('toggle-link');
+            toggle500Link.addEventListener('click', (e) => {
+                e.preventDefault(); // 기본 링크 동작 방지
+                updateScore(groupId, 500);
+            });
+            linkContainer.appendChild(toggle500Link);
+
+            // 초기화 링크
+            const resetLink = document.createElement('a');
+            resetLink.href = '#';
+            resetLink.textContent = '초기화';
+            resetLink.classList.add('reset-link');
+            resetLink.addEventListener('click', (e) => {
+                e.preventDefault(); // 기본 링크 동작 방지
+                resetScore(groupId);
+            });
+            linkContainer.appendChild(resetLink);
+
+            groupDiv.appendChild(linkContainer);
+            container.appendChild(groupDiv);
+
+            return scoreDisplay;
+        }
+
+        // 점수 업데이트 함수
+        function updateScore(groupId, value) {
+            const group = groups.find(g => g.id === groupId);
+            if (group) {
+                group.score += isIncreaseMode ? value : -value; // 모드에 따라 증가/감소
+                group.element.textContent = group.score;
+            }
+        }
+
+        // 점수 초기화 함수
+        function resetScore(groupId) {
+            const group = groups.find(g => g.id === groupId);
+            if (group) {
+                group.score = 0; // 점수를 초기화
+                group.element.textContent = group.score;
+            }
+        }
+
+        // 초기화 실행
+        initGroups(topGroupCount, topGroupsContainer);
+        initGroups(bottomGroupCount, bottomGroupsContainer);
+    </script>
+</body>
+</html>
